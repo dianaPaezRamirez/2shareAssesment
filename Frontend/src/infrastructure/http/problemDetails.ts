@@ -24,9 +24,8 @@ const defaultMessageByKind: Record<ApplicationErrorKind, string> = {
   unexpected: 'Something went wrong. Please try again.',
 }
 
-export async function toApplicationError(response: Response): Promise<ApplicationError> {
-  const kind = kindByStatus[response.status] ?? 'unexpected'
-  const body: unknown = await response.json().catch(() => null)
+export function toApplicationError(status: number, body: unknown): ApplicationError {
+  const kind = kindByStatus[status] ?? 'unexpected'
   const parsed = problemDetailsSchema.safeParse(body)
 
   if (!parsed.success) {

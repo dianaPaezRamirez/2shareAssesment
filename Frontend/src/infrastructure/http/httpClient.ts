@@ -1,7 +1,8 @@
+import axios, { type AxiosRequestConfig } from 'axios'
 import type { z } from 'zod'
 import { networkError, toApplicationError, unexpectedResponseError } from './problemDetails'
 
-type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE'
+const REQUEST_TIMEOUT_MS = 10_000
 
 export interface HttpClientOptions {
   baseUrl: string
@@ -17,42 +18,43 @@ export interface HttpClient {
 }
 
 export function createHttpClient({ baseUrl, getToken, onUnauthorized }: HttpClientOptions): HttpClient {
-  async function send(method: HttpMethod, path: string, body?: unknown): Promise<unknown> {
-    const headers = new Headers({ Accept: 'application/json' })
+  const instance = axios.create({
+    baseURL: baseUrl,
+    timeout: REQUEST_TIMEOUT_MS,
+    headers: { Accept: 'application/json' },
+  })
+
+  instance.interceptors.request.use((config) => {
     const token = getToken()
-
     if (token) {
-      headers.set('Authorization', `Bearer ${token}`)
+      config.headers.Authorization = `Bearer ${token}`
     }
-    if (body !== undefined) {
-      headers.set('Content-Type', 'application/json')
-    }
+    return config
+  })
 
-    let response: Response
-    try {
-      response = await fetch(`${baseUrl}${path}`, {
-        method,
-        headers,
-        body: body === undefined ? undefined : JSON.stringify(body),
-      })
-    } catch {
-      throw networkError()
-    }
+  instance.interceptors.response.use(
+    (response) => response,
+    (error: unknown) => {
+      // No response at all: the API is down, the network failed or the request timed out.
+      if (!axios.isAxiosError(error) || !error.response) {
+        throw networkError()
+      }
 
-    if (!response.ok) {
+      const { status, data } = error.response
+
       // A 401 with a token means the session is no longer valid (for example, it expired).
       // A 401 without a token is a failed login and is handled by the form.
-      if (response.status === 401 && token) {
+      if (status === 401 && error.config?.headers.Authorization) {
         onUnauthorized()
       }
-      throw await toApplicationError(response)
-    }
 
-    return response.status === 204 ? undefined : response.json()
-  }
+      throw toApplicationError(status, data)
+    },
+  )
 
-  async function request<T>(method: HttpMethod, path: string, schema: z.ZodType<T>, body?: unknown): Promise<T> {
-    const result = schema.safeParse(await send(method, path, body))
+  async function request<T>(config: AxiosRequestConfig, schema: z.ZodType<T>): Promise<T> {
+    const { data } = await instance.request<unknown>(config)
+    const result = schema.safeParse(data)
     if (!result.success) {
       throw unexpectedResponseError()
     }
@@ -60,11 +62,11 @@ export function createHttpClient({ baseUrl, getToken, onUnauthorized }: HttpClie
   }
 
   return {
-    get: (path, schema) => request('GET', path, schema),
-    post: (path, body, schema) => request('POST', path, schema, body),
-    patch: (path, schema) => request('PATCH', path, schema),
+    get: (path, schema) => request({ method: 'GET', url: path }, schema),
+    post: (path, body, schema) => request({ method: 'POST', url: path, data: body }, schema),
+    patch: (path, schema) => request({ method: 'PATCH', url: path }, schema),
     delete: async (path) => {
-      await send('DELETE', path)
+      await instance.delete(path)
     },
   }
 }
