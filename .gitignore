@@ -1,0 +1,15 @@
+# Repository-wide rules.
+# Backend/ and Frontend/ have their own .gitignore files for stack-specific rules.
+
+# Local environment files (may contain secrets)
+.env
+.env.local
+
+# Editors and IDEs
+.vs/
+.vscode/
+.idea/
+
+# Operating system files
+Thumbs.db
+.DS_Store
