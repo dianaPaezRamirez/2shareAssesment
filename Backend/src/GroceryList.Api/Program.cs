@@ -1,5 +1,6 @@
 using GroceryList.Api.ErrorHandling;
 using GroceryList.Api.Extensions;
+using GroceryList.Api.OpenApi;
 using GroceryList.Application;
 using GroceryList.Infrastructure;
 
@@ -13,7 +14,11 @@ builder.Services.AddFrontendCors(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+    options.AddOperationTransformer<BearerSecuritySchemeTransformer>();
+});
 
 var app = builder.Build();
 
@@ -22,6 +27,7 @@ app.UseExceptionHandler();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "Grocery List API v1"));
     await app.ApplyMigrationsAsync();
 }
 else

@@ -33,9 +33,15 @@ dotnet run --project src/GroceryList.Api
 The API starts at `http://localhost:5248`. On the first run it creates the database automatically
 (see [Database](#database)).
 
-To try the endpoints, open `Backend/src/GroceryList.Api/GroceryList.Api.http` in Visual Studio,
-Rider or VS Code (REST Client extension) and run the requests in order. The OpenAPI document is
-available at `http://localhost:5248/openapi/v1.json` while running in `Development`.
+There are two ways to try the endpoints while running in `Development`:
+
+- **Swagger UI** at `http://localhost:5248/swagger` (opened automatically when the API is started
+  from Visual Studio). Call register or login, click **Authorize** and paste the returned token
+  to call the protected endpoints.
+- **`Backend/src/GroceryList.Api/GroceryList.Api.http`** in Visual Studio, Rider or VS Code
+  (REST Client extension). Run the requests in order; the token is reused automatically.
+
+The raw OpenAPI document is available at `http://localhost:5248/openapi/v1.json`.
 
 ### Frontend
 
