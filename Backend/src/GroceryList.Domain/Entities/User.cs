@@ -13,7 +13,6 @@ public class User
     public string PasswordHash { get; private set; } = null!;
     public DateTime CreatedAt { get; private set; }
 
-    // Required by EF Core to materialize entities from the database.
     private User() { }
 
     public static User Create(string username, string fullName, string passwordHash)

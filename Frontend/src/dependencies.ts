@@ -6,7 +6,6 @@ import { createHttpGroceryItemRepository } from '@/infrastructure/grocery/httpGr
 import { createHttpClient } from '@/infrastructure/http/httpClient'
 import { useSessionStore } from '@/store/sessionStore'
 
-// Composition root: the only place that knows which adapter implements each port.
 const httpClient = createHttpClient({
   baseUrl: env.apiUrl,
   getToken: () => useSessionStore.getState().session?.token ?? null,

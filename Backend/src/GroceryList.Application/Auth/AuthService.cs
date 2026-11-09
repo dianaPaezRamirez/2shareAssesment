@@ -30,7 +30,6 @@ internal sealed class AuthService(
     {
         var user = await userRepository.GetByUsernameAsync(request.Username.Trim(), cancellationToken);
 
-        // Same error for unknown user and wrong password, so the API does not reveal which usernames exist.
         if (user is null || !passwordHasher.Verify(request.Password, user.PasswordHash))
             throw new InvalidCredentialsException();
 

@@ -35,15 +35,12 @@ export function createHttpClient({ baseUrl, getToken, onUnauthorized }: HttpClie
   instance.interceptors.response.use(
     (response) => response,
     (error: unknown) => {
-      // No response at all: the API is down, the network failed or the request timed out.
       if (!axios.isAxiosError(error) || !error.response) {
         throw networkError()
       }
 
       const { status, data } = error.response
 
-      // A 401 with a token means the session is no longer valid (for example, it expired).
-      // A 401 without a token is a failed login and is handled by the form.
       if (status === 401 && error.config?.headers.Authorization) {
         onUnauthorized()
       }

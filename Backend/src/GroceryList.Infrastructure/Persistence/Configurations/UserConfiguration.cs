@@ -16,8 +16,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(User.UsernameMaxLength)
             .IsRequired();
 
-        // The default SQL Server collation is case-insensitive,
-        // so "Diana" and "diana" are treated as the same username.
         builder.HasIndex(u => u.Username)
             .IsUnique();
 

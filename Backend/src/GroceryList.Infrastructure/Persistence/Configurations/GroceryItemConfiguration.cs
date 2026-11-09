@@ -22,7 +22,8 @@ public class GroceryItemConfiguration : IEntityTypeConfiguration<GroceryItem>
         builder.Property(i => i.CreatedAt)
             .IsRequired();
 
-        // Every item belongs to exactly one user; deleting a user removes their list.
+        builder.HasQueryFilter(i => i.DeletedAt == null);
+
         builder.HasOne<User>()
             .WithMany()
             .HasForeignKey(i => i.UserId)

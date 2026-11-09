@@ -14,13 +14,11 @@ public static class AuthenticationExtensions
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer();
 
-        // Uses the same validated JwtOptions that Infrastructure uses to issue tokens.
         services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
             .Configure<IOptions<JwtOptions>>((bearerOptions, jwtOptions) =>
             {
                 var jwt = jwtOptions.Value;
 
-                // Keep the original claim names ("sub", "name") instead of the long legacy .NET claim URIs.
                 bearerOptions.MapInboundClaims = false;
 
                 bearerOptions.TokenValidationParameters = new TokenValidationParameters

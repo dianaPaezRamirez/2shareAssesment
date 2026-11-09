@@ -12,7 +12,6 @@ public sealed class JwtOptions
     [Required]
     public string Audience { get; init; } = string.Empty;
 
-    // HMAC-SHA256 requires a key of at least 256 bits (32 bytes).
     [Required]
     [MinLength(32)]
     public string SecretKey { get; init; } = string.Empty;

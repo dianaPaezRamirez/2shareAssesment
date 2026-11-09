@@ -28,7 +28,7 @@ internal sealed class GroceryItemService(
     {
         var item = await GetOwnedItemAsync(userId, itemId, cancellationToken);
 
-        groceryItemRepository.Remove(item);
+        item.MarkAsDeleted();
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -52,8 +52,6 @@ internal sealed class GroceryItemService(
         return GroceryItemDto.FromEntity(item);
     }
 
-    // Items of other users are reported as "not found" instead of "forbidden",
-    // so the API does not confirm that the item exists.
     private async Task<GroceryItem> GetOwnedItemAsync(Guid userId, Guid itemId, CancellationToken cancellationToken) =>
         await groceryItemRepository.GetByIdAsync(itemId, userId, cancellationToken)
             ?? throw new NotFoundException($"Grocery item '{itemId}' was not found.");

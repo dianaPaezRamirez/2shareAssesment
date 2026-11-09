@@ -17,7 +17,12 @@ public class GroceryItem
 
     public DateTime CreatedAt { get; private set; }
 
-    // Required by EF Core to materialize entities from the database.
+    /// <summary>
+    /// Set when the item is removed. Removed items are kept in the database (soft delete)
+    /// so they can be listed or restored in the future.
+    /// </summary>
+    public DateTime? DeletedAt { get; private set; }
+
     private GroceryItem() { }
 
     public static GroceryItem Create(Guid userId, string name)
@@ -43,4 +48,6 @@ public class GroceryItem
     public void Tag() => IsTagged = true;
 
     public void Untag() => IsTagged = false;
+
+    public void MarkAsDeleted() => DeletedAt ??= DateTime.UtcNow;
 }

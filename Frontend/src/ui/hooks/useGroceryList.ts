@@ -10,7 +10,6 @@ export function useGroceryList() {
   const [pendingIds, setPendingIds] = useState<ReadonlySet<string>>(new Set())
 
   useEffect(() => {
-    // Ignores the result if the component is unmounted before the request finishes.
     let ignore = false
 
     groceryListUseCases
@@ -42,7 +41,6 @@ export function useGroceryList() {
     }
   }, [])
 
-  // Marks the item as busy while the request runs, so the user cannot click it twice.
   const runItemAction = useCallback(async (id: string, action: () => Promise<void>) => {
     setError(null)
     setPendingIds((current) => new Set(current).add(id))

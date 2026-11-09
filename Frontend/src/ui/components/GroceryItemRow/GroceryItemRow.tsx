@@ -12,19 +12,30 @@ interface GroceryItemRowProps {
 export function GroceryItemRow({ item, isPending, onToggleTag, onRemove }: GroceryItemRowProps) {
   return (
     <li className={item.isTagged ? `${styles.row} ${styles.tagged}` : styles.row}>
-      <label className={styles.toggle}>
-        <input
-          type="checkbox"
-          className={styles.checkbox}
-          checked={item.isTagged}
-          disabled={isPending}
-          onChange={() => onToggleTag(item)}
-        />
+      <div className={styles.info}>
         <span className={styles.name}>{item.name}</span>
-      </label>
-      <Button variant="danger" disabled={isPending} onClick={() => onRemove(item.id)} aria-label={`Remove ${item.name}`}>
-        Remove
-      </Button>
+        {item.isTagged && <span className={styles.badge}>In basket</span>}
+      </div>
+      <div className={styles.actions}>
+        <Button
+          size="small"
+          variant={item.isTagged ? 'secondary' : 'primary'}
+          disabled={isPending}
+          onClick={() => onToggleTag(item)}
+          aria-label={item.isTagged ? `Take ${item.name} out of the basket` : `Put ${item.name} in the basket`}
+        >
+          {item.isTagged ? 'Take out' : 'Put in basket'}
+        </Button>
+        <Button
+          size="small"
+          variant="danger"
+          disabled={isPending}
+          onClick={() => onRemove(item.id)}
+          aria-label={`Remove ${item.name}`}
+        >
+          Remove
+        </Button>
+      </div>
     </li>
   )
 }

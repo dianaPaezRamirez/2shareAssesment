@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GroceryList.Infrastructure.Persistence;
 
-// DbContext already implements SaveChangesAsync, so it fulfils the IUnitOfWork port without extra code.
 public class GroceryListDbContext(DbContextOptions<GroceryListDbContext> options) : DbContext(options), IUnitOfWork
 {
     public DbSet<User> Users => Set<User>();

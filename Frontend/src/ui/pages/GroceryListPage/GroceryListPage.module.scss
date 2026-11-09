@@ -31,6 +31,37 @@
   color: var(--color-muted);
 }
 
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.count {
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+}
+
+.sectionMessage {
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
 .list {
   display: flex;
   flex-direction: column;

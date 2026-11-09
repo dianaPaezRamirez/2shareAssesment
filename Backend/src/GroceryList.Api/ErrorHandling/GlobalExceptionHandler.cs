@@ -38,7 +38,6 @@ internal sealed class GlobalExceptionHandler(
             {
                 Status = statusCode,
                 Title = title,
-                // Internal error details are never exposed to the client.
                 Detail = statusCode == StatusCodes.Status500InternalServerError
                     ? "An unexpected error occurred. Please try again later."
                     : exception.Message

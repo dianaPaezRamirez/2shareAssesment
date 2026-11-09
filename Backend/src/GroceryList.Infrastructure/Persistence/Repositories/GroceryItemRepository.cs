@@ -17,6 +17,4 @@ internal sealed class GroceryItemRepository(GroceryListDbContext dbContext) : IG
         dbContext.GroceryItems.FirstOrDefaultAsync(i => i.Id == itemId && i.UserId == userId, cancellationToken);
 
     public void Add(GroceryItem item) => dbContext.GroceryItems.Add(item);
-
-    public void Remove(GroceryItem item) => dbContext.GroceryItems.Remove(item);
 }

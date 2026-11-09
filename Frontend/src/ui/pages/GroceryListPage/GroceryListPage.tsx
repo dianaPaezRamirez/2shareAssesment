@@ -1,3 +1,4 @@
+import type { GroceryItem } from '@/domain/grocery/groceryItem'
 import { Alert } from '@/ui/components/Alert/Alert'
 import { AddItemForm } from '@/ui/components/AddItemForm/AddItemForm'
 import { AppHeader } from '@/ui/components/AppHeader/AppHeader'
@@ -9,7 +10,22 @@ import styles from './GroceryListPage.module.scss'
 export function GroceryListPage() {
   const { user, logout } = useAuth()
   const { items, isLoading, error, isPending, addItem, removeItem, toggleTag, dismissError } = useGroceryList()
-  const taggedCount = items.filter((item) => item.isTagged).length
+  const itemsToBuy = items.filter((item) => !item.isTagged)
+  const itemsInBasket = items.filter((item) => item.isTagged)
+
+  const renderItems = (sectionItems: GroceryItem[]) => (
+    <ul className={styles.list}>
+      {sectionItems.map((item) => (
+        <GroceryItemRow
+          key={item.id}
+          item={item}
+          isPending={isPending(item.id)}
+          onToggleTag={toggleTag}
+          onRemove={removeItem}
+        />
+      ))}
+    </ul>
+  )
 
   return (
     <>
@@ -21,7 +37,7 @@ export function GroceryListPage() {
             <h1>My grocery list</h1>
             {items.length > 0 && (
               <p className={styles.summary}>
-                {taggedCount} of {items.length} in the basket
+                {itemsInBasket.length} of {items.length} in the basket
               </p>
             )}
           </header>
@@ -37,17 +53,27 @@ export function GroceryListPage() {
           ) : items.length === 0 ? (
             <p className={styles.message}>Your list is empty. Add the first product above.</p>
           ) : (
-            <ul className={styles.list}>
-              {items.map((item) => (
-                <GroceryItemRow
-                  key={item.id}
-                  item={item}
-                  isPending={isPending(item.id)}
-                  onToggleTag={toggleTag}
-                  onRemove={removeItem}
-                />
-              ))}
-            </ul>
+            <>
+              <section className={styles.section} aria-labelledby="to-buy-title">
+                <h2 id="to-buy-title" className={styles.sectionTitle}>
+                  To buy <span className={styles.count}>{itemsToBuy.length}</span>
+                </h2>
+                {itemsToBuy.length > 0 ? (
+                  renderItems(itemsToBuy)
+                ) : (
+                  <p className={styles.sectionMessage}>Everything is in the basket.</p>
+                )}
+              </section>
+
+              {itemsInBasket.length > 0 && (
+                <section className={styles.section} aria-labelledby="in-basket-title">
+                  <h2 id="in-basket-title" className={styles.sectionTitle}>
+                    In the basket <span className={styles.count}>{itemsInBasket.length}</span>
+                  </h2>
+                  {renderItems(itemsInBasket)}
+                </section>
+              )}
+            </>
           )}
         </section>
       </main>

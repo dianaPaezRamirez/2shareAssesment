@@ -12,6 +12,4 @@ public interface IGroceryItemRepository
     Task<GroceryItem?> GetByIdAsync(Guid itemId, Guid userId, CancellationToken cancellationToken);
 
     void Add(GroceryItem item);
-
-    void Remove(GroceryItem item);
 }

@@ -79,7 +79,7 @@ so a user can only access their own items.
 | `POST` | `/api/auth/login` | Log in with username and password. Returns a token. | `200` |
 | `GET` | `/api/grocery-items` | Get the grocery list of the current user | `200` |
 | `POST` | `/api/grocery-items` | Add a product | `201` |
-| `DELETE` | `/api/grocery-items/{id}` | Remove a product | `204` |
+| `DELETE` | `/api/grocery-items/{id}` | Remove a product (soft delete, see below) | `204` |
 | `PATCH` | `/api/grocery-items/{id}/tag` | Tag a product (in the basket) | `200` |
 | `PATCH` | `/api/grocery-items/{id}/untag` | Un-tag a product (back on the shelf) | `200` |
 
@@ -91,6 +91,10 @@ Errors follow the [Problem Details](https://www.rfc-editor.org/rfc/rfc9457) stan
 | `401` | Missing, invalid or expired token, or wrong credentials |
 | `404` | The product does not exist or belongs to another user |
 | `409` | The username is already taken |
+
+Removing a product is a **soft delete**: the row stays in the database with `DeletedAt` set, and
+it is excluded from every query. This keeps the history needed for a future recycle bin or
+restore feature.
 
 Logging out is handled by the client by discarding the token. Tokens expire after 60 minutes
 (`Jwt:ExpirationMinutes`).
@@ -131,6 +135,7 @@ SQL Server Object Explorer using:
 
 The database contains the tables `Users`, `GroceryItems` and `__EFMigrationsHistory`
 (used internally by Entity Framework Core to track which migrations have been applied).
+Removed products remain in `GroceryItems` with a value in `DeletedAt`.
 
 ### Schema script
 

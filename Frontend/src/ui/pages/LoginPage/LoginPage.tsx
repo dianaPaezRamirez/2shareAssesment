@@ -22,7 +22,6 @@ export function LoginPage() {
     defaultValues: { username: '', password: '' },
   })
 
-  // On success the session is stored and PublicOnlyRoute redirects to the grocery list.
   const onSubmit = handleSubmit(async (credentials) => {
     try {
       await login(credentials)

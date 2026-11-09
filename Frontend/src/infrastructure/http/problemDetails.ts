@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { ApplicationError, type ApplicationErrorKind } from '@/application/errors/applicationError'
 
-// RFC 9457 body returned by the API for every error.
 const problemDetailsSchema = z.object({
   title: z.string().optional(),
   detail: z.string().optional(),
@@ -46,7 +45,6 @@ export function unexpectedResponseError(): ApplicationError {
   return new ApplicationError('unexpected', 'The server returned an unexpected response.')
 }
 
-// The API returns field names as "Username"; the forms use "username".
 function toFieldErrors(errors: Record<string, string[]> = {}): Record<string, string> {
   return Object.fromEntries(
     Object.entries(errors)

@@ -1,6 +1,5 @@
 import { z } from 'zod'
 
-// Same rules as the API (RegisterRequest / LoginRequest), so most errors are shown before sending the form.
 export const USERNAME_MIN_LENGTH = 3
 export const USERNAME_MAX_LENGTH = 50
 export const FULL_NAME_MAX_LENGTH = 100
