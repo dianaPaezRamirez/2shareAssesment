@@ -1,0 +1,56 @@
+# Manual tests for the Grocery List API.
+# Run them from Visual Studio, Rider or VS Code (REST Client extension) while the API is running.
+# Execute "register" (or "login" if the user already exists) first: the token is reused by the other requests.
+
+@baseUrl = http://localhost:5248
+@token = {{login.response.body.$.token}}
+
+### Register a new user
+# @name register
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "jdoe",
+  "fullName": "John Doe",
+  "password": "Password123"
+}
+
+### Log in
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "jdoe",
+  "password": "Password123"
+}
+
+### Get the grocery list of the logged-in user
+GET {{baseUrl}}/api/grocery-items
+Authorization: Bearer {{token}}
+
+### Add a product
+# @name addItem
+POST {{baseUrl}}/api/grocery-items
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Milk"
+}
+
+### Tag the product (put it in the basket)
+PATCH {{baseUrl}}/api/grocery-items/{{addItem.response.body.$.id}}/tag
+Authorization: Bearer {{token}}
+
+### Un-tag the product (put it back on the shelf)
+PATCH {{baseUrl}}/api/grocery-items/{{addItem.response.body.$.id}}/untag
+Authorization: Bearer {{token}}
+
+### Remove the product
+DELETE {{baseUrl}}/api/grocery-items/{{addItem.response.body.$.id}}
+Authorization: Bearer {{token}}
+
+### Without a token the list is not accessible (expected: 401)
+GET {{baseUrl}}/api/grocery-items

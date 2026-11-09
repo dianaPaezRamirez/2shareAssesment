@@ -23,7 +23,60 @@ so the frontend or the backend can be replaced without changing the other.
 
 ## Getting started
 
-_Work in progress. Step-by-step instructions will be added as each part is completed._
+### Backend
+
+```
+cd Backend
+dotnet run --project src/GroceryList.Api
+```
+
+The API starts at `http://localhost:5248`. On the first run it creates the database automatically
+(see [Database](#database)).
+
+To try the endpoints, open `Backend/src/GroceryList.Api/GroceryList.Api.http` in Visual Studio,
+Rider or VS Code (REST Client extension) and run the requests in order. The OpenAPI document is
+available at `http://localhost:5248/openapi/v1.json` while running in `Development`.
+
+### Frontend
+
+_Work in progress._
+
+## API
+
+All endpoints use JSON. Grocery item endpoints require the header `Authorization: Bearer <token>`,
+using the token returned by register or login. The user is always identified from the token,
+so a user can only access their own items.
+
+| Method | Endpoint | Description | Success |
+|---|---|---|---|
+| `POST` | `/api/auth/register` | Register with username, full name and password. Returns a token. | `201` |
+| `POST` | `/api/auth/login` | Log in with username and password. Returns a token. | `200` |
+| `GET` | `/api/grocery-items` | Get the grocery list of the current user | `200` |
+| `POST` | `/api/grocery-items` | Add a product | `201` |
+| `DELETE` | `/api/grocery-items/{id}` | Remove a product | `204` |
+| `PATCH` | `/api/grocery-items/{id}/tag` | Tag a product (in the basket) | `200` |
+| `PATCH` | `/api/grocery-items/{id}/untag` | Un-tag a product (back on the shelf) | `200` |
+
+Errors follow the [Problem Details](https://www.rfc-editor.org/rfc/rfc9457) standard:
+
+| Status | When |
+|---|---|
+| `400` | Invalid input (the response lists the invalid fields) |
+| `401` | Missing, invalid or expired token, or wrong credentials |
+| `404` | The product does not exist or belongs to another user |
+| `409` | The username is already taken |
+
+Logging out is handled by the client by discarding the token. Tokens expire after 60 minutes
+(`Jwt:ExpirationMinutes`).
+
+## Configuration
+
+| Setting | File | Notes |
+|---|---|---|
+| `ConnectionStrings:GroceryListDb` | `appsettings.json` | See [Database](#database) |
+| `Jwt:Issuer`, `Jwt:Audience`, `Jwt:ExpirationMinutes` | `appsettings.json` | Token settings |
+| `Jwt:SecretKey` | `appsettings.Development.json` | Development-only key. In any other environment it **must** be provided, for example with the environment variable `Jwt__SecretKey` (minimum 32 characters). The API does not start without it. |
+| `Cors:AllowedOrigins` | `appsettings.json` | Frontend URLs allowed to call the API (`http://localhost:5173` by default) |
 
 ## Database
 
