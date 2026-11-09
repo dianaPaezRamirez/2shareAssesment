@@ -1,9 +1,11 @@
+using GroceryList.Application.Abstractions.Persistence;
 using GroceryList.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace GroceryList.Infrastructure.Persistence;
 
-public class GroceryListDbContext(DbContextOptions<GroceryListDbContext> options) : DbContext(options)
+// DbContext already implements SaveChangesAsync, so it fulfils the IUnitOfWork port without extra code.
+public class GroceryListDbContext(DbContextOptions<GroceryListDbContext> options) : DbContext(options), IUnitOfWork
 {
     public DbSet<User> Users => Set<User>();
     public DbSet<GroceryItem> GroceryItems => Set<GroceryItem>();
