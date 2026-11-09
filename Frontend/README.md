@@ -1,32 +1,43 @@
-# React + TypeScript + Vite
+# Grocery List - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React + TypeScript client for the Grocery List API. See the [main README](../README.md) for how to run it.
 
-Currently, two official plugins are available:
+## Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The code follows a hexagonal (ports and adapters) architecture. Dependencies always point inward:
+`ui` → `application` → `domain`, and `infrastructure` implements the ports defined in `application`.
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```
+src/
+├─ domain/            Models and business rules (validation schemas). No React, no HTTP.
+├─ application/       Ports (repository interfaces), use cases and application errors.
+├─ infrastructure/    Adapters: HTTP client (axios), API repositories, environment configuration.
+├─ store/             Global session state (Zustand), persisted in sessionStorage.
+├─ ui/
+│  ├─ components/     Reusable components, each with its own SCSS module.
+│  ├─ hooks/          Custom hooks used by the pages (useAuth, useGroceryList).
+│  ├─ pages/          Login, register and grocery list pages.
+│  └─ routes/         Router and route guards (protected and public-only routes).
+├─ styles/            Global styles and design tokens (CSS custom properties).
+└─ dependencies.ts    Composition root: connects adapters to use cases.
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Main libraries
+
+| Library | Purpose |
+|---|---|
+| `react-router` | Routing and route guards |
+| `zustand` | Global session state |
+| `zod` | Form validation and API response validation |
+| `react-hook-form` + `@hookform/resolvers` | Form state, using the Zod schemas |
+| `axios` | HTTP client (interceptors add the token and translate API errors) |
+| `sass` | SCSS modules |
+
+## Session handling
+
+- The token returned by the API is stored in `sessionStorage`, so it survives a page reload
+  but is discarded when the tab is closed.
+- An expired session is discarded when the application starts.
+- If the API answers `401` to an authenticated request, the session is cleared and the user is
+  redirected to the login page.
+- Logging out discards the token on the client; the API is stateless.

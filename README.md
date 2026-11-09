@@ -45,7 +45,27 @@ The raw OpenAPI document is available at `http://localhost:5248/openapi/v1.json`
 
 ### Frontend
 
-_Work in progress._
+With the API running, in another terminal:
+
+```
+cd Frontend
+npm install
+npm run dev
+```
+
+The application starts at `http://localhost:5173`. The port is fixed because it is the origin
+allowed by the API (`Cors:AllowedOrigins`).
+
+The API URL is read from `VITE_API_URL`, defined in `Frontend/.env.development` for local
+development. To use a different URL on your machine, create `Frontend/.env.development.local`
+(ignored by Git). For a production build, see `Frontend/.env.example`.
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start the development server |
+| `npm run build` | Type-check and build for production into `dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | Run the linter (oxlint) |
 
 ## API
 
