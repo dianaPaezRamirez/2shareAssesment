@@ -15,6 +15,13 @@ so the frontend or the backend can be replaced without changing the other.
 | `DB/` | SQL scripts that document the database schema (SQL Server) |
 | `docs/` | Functional, logical and technical documentation, including diagrams |
 
+## Documentation
+
+1. [Functional design](docs/01-functional-design.md): use cases, user stories and acceptance criteria.
+2. [Architecture and logical design](docs/02-architecture.md): system and software architecture diagrams, data model.
+3. [Technical design](docs/03-technical-design.md): stack, error handling, security, frontend details.
+4. [Handover](docs/04-handover.md): configuration, known limitations and next steps.
+
 ## Requirements
 
 - [.NET SDK 10](https://dotnet.microsoft.com/download/dotnet/10.0)

@@ -63,7 +63,7 @@ flowchart LR
 ## 1.4 User stories and acceptance criteria
 
 The nine user stories come from the assessment. The acceptance criteria describe the implemented
-behavior and include the answers received to the clarification questions (see [1.6](#16-clarifications)).
+behavior and include the answers received to the clarification questions (see [1.7](#17-clarifications)).
 
 ### US1 - Register
 
